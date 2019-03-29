@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="dronePath.FormChoices"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Background="AliceBlue">
+    <Grid>
+        <StackPanel Margin="10">
+            <ComboBox Name="cbo_type">
+                <ComboBoxItem IsSelected="True">Camion</ComboBoxItem>
+                <ComboBoxItem>Voiture</ComboBoxItem>
+                <ComboBoxItem>Moto</ComboBoxItem>
+            </ComboBox>
+            <Label>ID : </Label>
+            <TextBox Name="txt_id" TextChanged="Txt_id_TextChanged"></TextBox>
+            <Button Name="btn_send" Click="Btn_send_Click">Allez !</Button>
+        </StackPanel>
+    </Grid>
+</UserControl>

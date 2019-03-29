@@ -4,8 +4,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DroneQualITAffichage", "DroneQualITAffichage\DroneQualITAffichage.csproj", "{8BD07668-F5AE-4811-BD3A-F9029B101BB0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6FB8FB8A-8310-4C4A-BF61-67E4881224DD} = {6FB8FB8A-8310-4C4A-BF61-67E4881224DD}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DroneQualITLecture", "DroneQualITLecture\DroneQualITLecture.csproj", "{FB6880DF-4C07-48FF-B5DC-B8066665098D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DroneQualITPath", "DroneQualITPath\DroneQualITPath.csproj", "{6FB8FB8A-8310-4C4A-BF61-67E4881224DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +26,10 @@ Global
 		{FB6880DF-4C07-48FF-B5DC-B8066665098D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB6880DF-4C07-48FF-B5DC-B8066665098D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB6880DF-4C07-48FF-B5DC-B8066665098D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FB8FB8A-8310-4C4A-BF61-67E4881224DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FB8FB8A-8310-4C4A-BF61-67E4881224DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FB8FB8A-8310-4C4A-BF61-67E4881224DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FB8FB8A-8310-4C4A-BF61-67E4881224DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
