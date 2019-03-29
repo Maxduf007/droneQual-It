@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Messaging;
+using System.Threading;
 
 namespace DroneQualIT.Lecture
 {
@@ -32,15 +33,12 @@ namespace DroneQualIT.Lecture
             if (!Directory.Exists(Path_CommandesTraitees))
                 Directory.CreateDirectory(Path_CommandesTraitees);
 
-            if (Directory.EnumerateFiles(Path_Commandes, Filter).ToList().Count > 0)
-            {
-                foreach (string item in Directory.EnumerateFiles(Path_Commandes, Filter))
-                    HandleFile(item, item.Split('/').Last());
-            }
+            foreach (string item in Directory.EnumerateFiles(Path_Commandes, Filter))
+                HandleFile(item, item.Split('/').Last());
 
             var FileWatcher = Watch();
-            while(true)
-                FileWatcher.WaitForChanged(WatcherChangeTypes.All);
+
+            new AutoResetEvent(false).WaitOne();
         }
 
         private static FileSystemWatcher Watch()
@@ -48,6 +46,8 @@ namespace DroneQualIT.Lecture
             var FileWatcher = new FileSystemWatcher(Path_Commandes, Filter);
             FileWatcher.Created += (sender, e) => HandleFile(e.FullPath, e.Name);
             FileWatcher.Renamed += (sender, e) => HandleFile(e.FullPath, e.Name);
+            FileWatcher.NotifyFilter = NotifyFilters.FileName;
+            FileWatcher.EnableRaisingEvents = true;
 
             Console.WriteLine("En attente d'un nouveau fichier (Commande_*.txt)");
 

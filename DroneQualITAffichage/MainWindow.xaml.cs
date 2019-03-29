@@ -33,7 +33,7 @@ namespace DroneQualIT.Affichage
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e) =>
-            Task.Run(() => Queue.BeginReceive());
+            Queue.BeginReceive();
 
         private void OnReceiveCompleted(object sender, ReceiveCompletedEventArgs e)
         {
@@ -42,7 +42,7 @@ namespace DroneQualIT.Affichage
             switch (message.Body)
             {
                 case Vehicule vehicule:
-                    Dispatcher.Invoke(()=>UpdateVehiculeLocation(vehicule));
+                    UpdateVehiculeLocation(vehicule);
                     Queue.BeginReceive();
                     break;
                 case int time:
