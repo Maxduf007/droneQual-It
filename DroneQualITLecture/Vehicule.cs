@@ -8,6 +8,7 @@ namespace DroneQualIT
     {
         protected const string BasePath = "pack://application:,,,/Resources/Images/";
         protected static string UriPath { get; set; }
+        protected static string Name { get; set; }
 
         public int Id { get; }
         public int X { get; private set; }
@@ -28,5 +29,8 @@ namespace DroneQualIT
 
         public BitmapImage ToImage() =>
             new BitmapImage(new Uri(UriPath, UriKind.Absolute));
+
+        public override string ToString() =>
+              $"{Name} #{Id}: {X}, {Y}";
     }
 }

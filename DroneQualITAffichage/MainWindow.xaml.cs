@@ -11,6 +11,8 @@ namespace DroneQualIT.Affichage
 {
     public partial class MainWindow : Window
     {
+        public event EventHandler<Message> ReceivedMessage;
+
         private const int ImageSize = 20;
         private const int SleepTimeDefault = 25;
 
@@ -38,7 +40,8 @@ namespace DroneQualIT.Affichage
         private void OnReceiveCompleted(object sender, ReceiveCompletedEventArgs e)
         {
             var message = Queue.EndReceive(e.AsyncResult);
-            
+            ReceivedMessage?.Invoke(this, message);
+
             switch (message.Body)
             {
                 case Vehicule vehicule:
@@ -81,5 +84,8 @@ namespace DroneQualIT.Affichage
             Canvas.SetLeft(Images[index], vehicule.X);
             Canvas.SetTop(Images[index], vehicule.Y);
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e) =>
+            new LogWindow(this).Show();
     }
 }

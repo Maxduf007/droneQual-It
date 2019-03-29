@@ -5,5 +5,6 @@
     <Canvas x:Name="canvas" Height="{Binding ActualHeight, ElementName=background}"
             Width="{Binding ActualWidth, ElementName=background}">
         <Image x:Name="background" Source="/Resources/Images/Background.jpg" Panel.ZIndex="-1" />
+        <Button Content="Log" Width="50px" Click="Button_Click"/>
     </Canvas>
 </Window>

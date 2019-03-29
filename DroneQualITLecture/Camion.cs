@@ -8,6 +8,7 @@ namespace DroneQualIT
         static Camion()
         {
             UriPath = $"{BasePath}Camion.png";
+            Name = nameof(Vehicule);
         }
 
         public Camion(int id, int x, int y) : base(id, x, y) { }

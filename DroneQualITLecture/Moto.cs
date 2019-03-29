@@ -8,6 +8,7 @@ namespace DroneQualIT
         static Moto()
         {
             UriPath = $"{BasePath}Camion.png";
+            Name = nameof(Moto);
         }
 
         public Moto(int id, int x, int y) : base(id, x, y) { }
