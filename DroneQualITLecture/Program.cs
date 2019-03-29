@@ -44,13 +44,11 @@ namespace DroneQualIT.Lecture
         private static FileSystemWatcher Watch()
         {
             var FileWatcher = new FileSystemWatcher(Path_Commandes, Filter)
-            /*{
+            {
                 EnableRaisingEvents = true
-            }*/;
+            };
             FileWatcher.Created += (sender, e) => HandleFile(e.FullPath, e.Name);
             FileWatcher.Renamed += (sender, e) => HandleFile(e.FullPath, e.Name);
-            FileWatcher.NotifyFilter = NotifyFilters.FileName;
-            FileWatcher.EnableRaisingEvents = true;
 
             Console.WriteLine("En attente d'un nouveau fichier (Commande_*.txt)");
 
