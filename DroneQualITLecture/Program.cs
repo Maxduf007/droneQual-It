@@ -8,7 +8,8 @@ namespace DroneQualIT.Lecture
 {
     internal static class Program
     {
-        private const string Path = "Commandes\\";
+        private const string Path_Commandes = "Commandes/";
+        private const string Path_CommandesTraitees = Path_Commandes + "CommandesTraitees/";
         private const string Filter = "Commande_*.txt";
 
         private static MessageQueue Queue { get; }
@@ -26,17 +27,14 @@ namespace DroneQualIT.Lecture
         {
             DisableConsoleQuickEdit.Go();
 
-            if (!Directory.Exists(Path))
-            {
-                Console.WriteLine("Erreur: Le dossier \"Commandes\" est introuvable.\r\nAppuyez sur une touche pour continuer...");
-                Console.ReadKey();
-                return;
-            }
-                
+            if (!Directory.Exists(Path_Commandes))
+                Directory.CreateDirectory(Path_Commandes);
+            if (!Directory.Exists(Path_CommandesTraitees))
+                Directory.CreateDirectory(Path_CommandesTraitees);
 
-            if (Directory.EnumerateFiles(Path, Filter).ToList().Count > 0)
+            if (Directory.EnumerateFiles(Path_Commandes, Filter).ToList().Count > 0)
             {
-                foreach (string item in Directory.EnumerateFiles(Path, Filter))
+                foreach (string item in Directory.EnumerateFiles(Path_Commandes, Filter))
                     HandleFile(item, item.Split('/').Last());
             }
 
@@ -47,10 +45,11 @@ namespace DroneQualIT.Lecture
 
         private static FileSystemWatcher Watch()
         {
-            var FileWatcher = new FileSystemWatcher(Path, Filter);
+            var FileWatcher = new FileSystemWatcher(Path_Commandes, Filter);
             FileWatcher.Created += (sender, e) => HandleFile(e.FullPath, e.Name);
+            FileWatcher.Renamed += (sender, e) => HandleFile(e.FullPath, e.Name);
 
-            Console.WriteLine("En attente d'un nouveau fichier (Commande_*.txt");
+            Console.WriteLine("En attente d'un nouveau fichier (Commande_*.txt)");
 
             return FileWatcher;
         }
@@ -67,6 +66,28 @@ namespace DroneQualIT.Lecture
                     case int time:
                         Queue.Send(new Message(time, Queue.Formatter)); break;
                 }
+            if(!File.Exists(Path_CommandesTraitees + name.Substring(0, name.Length - 3) + "sav"))
+                File.Move(path, Path_CommandesTraitees + name.Substring(0, name.Length - 3) + "sav");
+            else
+            {
+                Console.Write($"Le fichier \"{name}\" existe déjà dans le dossier \"CommandesTraitees\"...\r\nVoulez-vous l'écraser ? (o/n): ");
+
+                string key = Console.ReadKey().KeyChar.ToString().ToUpper();
+                while(key != "O" && key != "N")
+                {
+                    key = Console.ReadKey().KeyChar.ToString().ToUpper();
+                }
+
+                if (key == "O")
+                {
+                    File.Delete(Path_CommandesTraitees + name.Substring(0, name.Length - 3) + "sav");
+                    File.Move(path, Path_CommandesTraitees + name.Substring(0, name.Length - 3) + "sav");
+                }
+                else
+                    File.Delete(path);
+
+                Console.WriteLine();
+            }
         }
 
         static IEnumerable<object> ReadFile(string path)
@@ -103,7 +124,8 @@ namespace DroneQualIT.Lecture
                 }
             }
 
-            return File.ReadAllLines(path)
+            return File.ReadLines(path)
+                .Where((line) => line.Length > 2 && line.Substring(0,2) != "//")
                 .Select((line, index) => new { Values = line.TrimEnd(',').Split(','), Index = index + 1 })
                 .Select(values => Instantiate(values.Values, values.Index))
                 .Where(value => !(value is null));
