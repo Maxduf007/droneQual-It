@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Messaging;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace DroneQualIT.Lecture
 {
@@ -38,6 +39,9 @@ namespace DroneQualIT.Lecture
 
             var FileWatcher = Watch();
 
+            /*while(true)
+                FileWatcher.WaitForChanged(WatcherChangeTypes.All);*/
+
             new AutoResetEvent(false).WaitOne();
         }
 
@@ -47,12 +51,18 @@ namespace DroneQualIT.Lecture
             {
                 EnableRaisingEvents = true
             };
-            FileWatcher.Created += (sender, e) => HandleFile(e.FullPath, e.Name);
-            FileWatcher.Renamed += (sender, e) => HandleFile(e.FullPath, e.Name);
+            FileWatcher.Created += (sender, e) => BeginHandleFile(e.FullPath, e.Name);
+            FileWatcher.Renamed += (sender, e) => BeginHandleFile(e.FullPath, e.Name);
 
             Console.WriteLine("En attente d'un nouveau fichier (Commande_*.txt)");
 
             return FileWatcher;
+        }
+
+        private static async Task BeginHandleFile(string path, string name)
+        {
+            await Task.Delay(500);
+            HandleFile(path, name);
         }
 
         private static void HandleFile(string path, string name)
@@ -67,28 +77,11 @@ namespace DroneQualIT.Lecture
                     case int time:
                         Queue.Send(new Message(time, Queue.Formatter)); break;
                 }
-            if(!File.Exists(Path_CommandesTraitees + name.Substring(0, name.Length - 3) + "sav"))
-                File.Move(path, Path_CommandesTraitees + name.Substring(0, name.Length - 3) + "sav");
-            else
-            {
-                Console.Write($"Le fichier \"{name}\" existe déjà dans le dossier \"CommandesTraitees\"...\r\nVoulez-vous l'écraser ? (o/n): ");
 
-                string key = Console.ReadKey().KeyChar.ToString().ToUpper();
-                while(key != "O" && key != "N")
-                {
-                    key = Console.ReadKey().KeyChar.ToString().ToUpper();
-                }
-
-                if (key == "O")
-                {
-                    File.Delete(Path_CommandesTraitees + name.Substring(0, name.Length - 3) + "sav");
-                    File.Move(path, Path_CommandesTraitees + name.Substring(0, name.Length - 3) + "sav");
-                }
-                else
-                    File.Delete(path);
-
-                Console.WriteLine();
-            }
+            string newPath = Path_CommandesTraitees + name.Substring(0, name.Length - 3) + "sav";
+            if (File.Exists(newPath))
+                File.Delete(newPath);
+            File.Move(path, newPath);
         }
 
         static IEnumerable<object> ReadFile(string path)
@@ -125,9 +118,9 @@ namespace DroneQualIT.Lecture
                 }
             }
 
-            return File.ReadLines(path)
-                .Select((line, index) => new { Line = line, Index = index})
-                .Where(line => line.Line.Length > 2 && line.Line.Substring(0,2) != "//")
+            return File.ReadAllLines(path)
+                .Select((line, index) => new { Line = line, Index = index })
+                .Where(line => line.Line.Length > 2 && line.Line.Substring(0, 2) != "//")
                 .Select(line => new { Values = line.Line.TrimEnd(',').Split(','), line.Index })
                 .Select(values => Instantiate(values.Values, values.Index))
                 .Where(value => !(value is null));
