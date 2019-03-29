@@ -80,8 +80,12 @@ namespace DroneQualIT.Lecture
 
             string newPath = Path_CommandesTraitees + name.Substring(0, name.Length - 3) + "sav";
             if (File.Exists(newPath))
+            {
                 File.Delete(newPath);
+                Console.WriteLine($"Le fichier {name} existe déjà dans le dossier des commandes traitées. Le fichier sera ecrasé...");
+            }
             File.Move(path, newPath);
+            Console.WriteLine($"{name} sauvegarder dans le dossier \"CommandesTraitees\".");
         }
 
         static IEnumerable<object> ReadFile(string path)

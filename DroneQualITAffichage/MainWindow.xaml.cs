@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Messaging;
@@ -14,6 +14,8 @@ namespace DroneQualIT.Affichage
         private const int ImageSize = 20;
         private const int SleepTimeDefault = 25;
 
+        private Task Interpreter { get; set; }
+        private ConcurrentQueue<object> ActionQueue { get; } = new ConcurrentQueue<object>();
         private IList<Vehicule> Vehicules { get; } = new List<Vehicule>();
         private IList<Image> Images { get; } = new List<Image>();
         private MessageQueue Queue { get; }
@@ -38,20 +40,31 @@ namespace DroneQualIT.Affichage
         private void OnReceiveCompleted(object sender, ReceiveCompletedEventArgs e)
         {
             var message = Queue.EndReceive(e.AsyncResult);
-            
-            switch (message.Body)
-            {
-                case Vehicule vehicule:
-                    Dispatcher.Invoke(() => UpdateVehiculeLocation(vehicule));
-                    Queue.BeginReceive();
-                    break;
-                case int time:
-                    Sleep(time, (_sender, _e) => Queue.BeginReceive()); break;
-            }
+            ActionQueue.Enqueue(message.Body);
+            Queue.BeginReceive();
+
+            if ((Interpreter?.Status ?? TaskStatus.Canceled) 
+                >= TaskStatus.RanToCompletion)
+                Interpreter = Task.Run(ExecuteAction);
         }
 
-        private void Sleep(int time, EventHandler handler) =>
-            new DispatcherTimer(TimeSpan.FromMilliseconds(time), DispatcherPriority.Normal, handler, Dispatcher.CurrentDispatcher);
+        private async Task ExecuteAction()
+        {
+            int sleep = 100;
+            if (!ActionQueue.TryDequeue(out object message))
+                return;
+
+            switch (message)
+            {
+                case Vehicule vehicule:
+                    Dispatcher.Invoke(() => UpdateVehiculeLocation(vehicule), DispatcherPriority.Input); break;
+                case int time:
+                    sleep = time; break;
+            }
+
+            await Task.Delay(sleep);
+            await ExecuteAction();
+        }
 
         private void UpdateVehiculeLocation(Vehicule vehicule)
         {
@@ -71,6 +84,7 @@ namespace DroneQualIT.Affichage
             int index = Vehicules.IndexOf(vehicule);
 
             if (index == Images.Count)
+            {
                 Images.Add(new Image
                 {
                     Source = vehicule.ToImage(),
@@ -78,8 +92,13 @@ namespace DroneQualIT.Affichage
                     Width = ImageSize
                 });
 
+                canvas.Children.Add(Images.Last());
+            }
+
             Canvas.SetLeft(Images[index], vehicule.X);
             Canvas.SetTop(Images[index], vehicule.Y);
+
+            canvas.UpdateLayout();
         }
     }
 }
