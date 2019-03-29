@@ -43,7 +43,10 @@ namespace DroneQualIT.Lecture
 
         private static FileSystemWatcher Watch()
         {
-            var FileWatcher = new FileSystemWatcher(Path_Commandes, Filter);
+            var FileWatcher = new FileSystemWatcher(Path_Commandes, Filter)
+            /*{
+                EnableRaisingEvents = true
+            }*/;
             FileWatcher.Created += (sender, e) => HandleFile(e.FullPath, e.Name);
             FileWatcher.Renamed += (sender, e) => HandleFile(e.FullPath, e.Name);
             FileWatcher.NotifyFilter = NotifyFilters.FileName;
@@ -125,8 +128,9 @@ namespace DroneQualIT.Lecture
             }
 
             return File.ReadLines(path)
-                .Where((line) => line.Length > 2 && line.Substring(0,2) != "//")
-                .Select((line, index) => new { Values = line.TrimEnd(',').Split(','), Index = index + 1 })
+                .Select((line, index) => new { Line = line, Index = index})
+                .Where(line => line.Line.Length > 2 && line.Line.Substring(0,2) != "//")
+                .Select(line => new { Values = line.Line.TrimEnd(',').Split(','), line.Index })
                 .Select(values => Instantiate(values.Values, values.Index))
                 .Where(value => !(value is null));
         }
