@@ -11,6 +11,8 @@ namespace DroneQualIT.Affichage
 {
     public partial class MainWindow : Window
     {
+        public event EventHandler<Message> ReceivedMessage;
+
         private const int ImageSize = 20;
         private const int SleepTimeDefault = 25;
 
@@ -100,5 +102,8 @@ namespace DroneQualIT.Affichage
 
             canvas.UpdateLayout();
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e) =>
+            new LogWindow(this).Show();
     }
 }

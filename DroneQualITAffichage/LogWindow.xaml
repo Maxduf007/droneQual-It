@@ -1,0 +1,10 @@
+﻿<Window x:Class="DroneQualIT.Affichage.LogWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="LogWindow">
+    <Grid Name="grdLog">
+        <TextBox Name="txtLog"
+                 />
+
+    </Grid>
+</Window>
