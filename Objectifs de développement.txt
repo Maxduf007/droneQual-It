@@ -4,8 +4,8 @@
 MD2-Le lecteur devrait donner un meilleur feedback
   -afficher toutes les commandes traitées (par fichier et par exécution)
   -le nombres de messages envoyés (par fichier et par exécution)
-CM3-Le langage de commande devrait supporter des lignes en commentaires
-CM4-Le lecteur devrait pouvoir traiter tous les fichiers ayant un pattern convenu
+CM3-Le langage de commande devrait supporter des lignes en commentaires                  -> (//)
+CM4-Le lecteur devrait pouvoir traiter tous les fichiers ayant un pattern convenu        -> (Commande_*.txt)
 exemples commande.txt
 commande1.txt
 commande2.txt
@@ -14,7 +14,8 @@ MD5-L'afficheur devrait avoir une barre de statut indiquant le dernier msg reçu
 OB6-Chaque véhicule devrait être identifié  
 FL7-Les véhicules graphiques devraient avoir 4 orientations différentes selon le sens de leur déplacement
 OB8-La documentation devrait être mise à jour
-CM9-Chaque fichier exécuté devrait être sauvegardé de façon unique
+CM9-Chaque fichier exécuté devrait être sauvegardé de façon unique -> Commandes traitees sont sauvegarder dans le dossier
+                                                                      CommandesTraitees.
 10-Le graphisme du background devrait être plus joli
 FL11- Un engin de création de fichiers de commandes devrait exister
 ¸¸¸¸
