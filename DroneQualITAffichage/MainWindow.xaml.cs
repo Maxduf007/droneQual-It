@@ -42,7 +42,7 @@ namespace DroneQualIT.Affichage
             switch (message.Body)
             {
                 case Vehicule vehicule:
-                    UpdateVehiculeLocation(vehicule);
+                    Dispatcher.Invoke(()=>UpdateVehiculeLocation(vehicule));
                     Queue.BeginReceive();
                     break;
                 case int time:

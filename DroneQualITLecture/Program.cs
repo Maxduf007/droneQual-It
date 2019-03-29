@@ -8,7 +8,7 @@ namespace DroneQualIT.Lecture
 {
     internal static class Program
     {
-        private const string Path = "Commandes/";
+        private const string Path = "Commandes\\";
         private const string Filter = "Commande_*.txt";
 
         private static MessageQueue Queue { get; }
@@ -26,8 +26,19 @@ namespace DroneQualIT.Lecture
         {
             DisableConsoleQuickEdit.Go();
 
-            foreach (string item in Directory.EnumerateFiles(Path, Filter))
-                HandleFile(item, item.Split('/').Last());
+            if (!Directory.Exists(Path))
+            {
+                Console.WriteLine("Erreur: Le dossier \"Commandes\" est introuvable.\r\nAppuyez sur une touche pour continuer...");
+                Console.ReadKey();
+                return;
+            }
+                
+
+            if (Directory.EnumerateFiles(Path, Filter).ToList().Count > 0)
+            {
+                foreach (string item in Directory.EnumerateFiles(Path, Filter))
+                    HandleFile(item, item.Split('/').Last());
+            }
 
             var FileWatcher = Watch();
             while(true)
