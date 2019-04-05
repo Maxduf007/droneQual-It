@@ -33,7 +33,7 @@ namespace dronePath
 
             replace(fc);
 
-            file_name = $"Commandes/Comande_Mobile_{Guid.NewGuid().ToString()}.txt";
+            file_name = $"Commandes/Commande_Mobile_{Guid.NewGuid().ToString()}.txt";
         }
 
         public void replace(UserControl uc )

@@ -1,7 +1,9 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Messaging;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,13 +26,16 @@ namespace DroneQualIT.Affichage
 
         public MainWindow()
         {
-            if (!MessageQueue.Exists(@".\Private$\DroneQualIT"))
-                MessageQueue.Create(@".\Private$\DroneQualIT");
+            if (!MessageQueue.Exists(@".\Private$\DroneQualT"))
+                MessageQueue.Create(@".\Private$\DroneQualT");
 
-            Queue = new MessageQueue(@".\Private$\DroneQualIT", QueueAccessMode.Receive)
+            string everyone = new SecurityIdentifier(WellKnownSidType.WorldSid, null).Translate(typeof(NTAccount)).Value;
+
+            Queue = new MessageQueue(@".\Private$\DroneQualT", QueueAccessMode.Receive)
             {
                 Formatter = new BinaryMessageFormatter()
             };
+            Queue.SetPermissions(everyone, MessageQueueAccessRights.FullControl, AccessControlEntryType.Allow);
 
             InitializeComponent();
             Queue.ReceiveCompleted += OnReceiveCompleted;
@@ -63,6 +68,8 @@ namespace DroneQualIT.Affichage
                 case int time:
                     sleep = time; break;
             }
+
+            ReceivedMessage?.Invoke(this, (Message)message);
 
             await Task.Delay(sleep);
             await ExecuteAction();

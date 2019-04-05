@@ -30,23 +30,16 @@ namespace DroneQualIT.Affichage
 
         }
 
-        private void WriteLogLine(Message e)
+        private void WriteLogLine(object e)
         {
-            Vehicule vehicule = (Vehicule)e.Body;
-
-            txtLog.Text +=  "Commande " + vehicule.ToString() + "\n";
-
+            switch (e)
+            {
+                case Vehicule vehicule:
+                    txtLog.Text += $"Commande {vehicule}\n"; break;
+                case int time:
+                    txtLog.Text += $"Sleep de {time} ms\n"; break;
+            }
         }
-
-
-
-
-
-
-
-
-
-
 
         /*public Message message
        {
